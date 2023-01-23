@@ -2,7 +2,7 @@ import React, {useRef} from 'react';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-// import {Icon} from '@rneui/themed';
+import {Icon} from '@rneui/themed';
 import {
   StyleSheet,
   Dimensions,
@@ -13,10 +13,8 @@ import {
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 // Import the screens
-import TodayScreen from './Stacks/TodayScreen';
-// import TomorrowScreen from './Stacks/TomorrowScreen';
-
-// import theme from './styles/theme.style';
+import PokedexScreen from './Stacks/PokedexScreen';
+import SightingsScreen from './Stacks/SightingsScreen';
 
 import {BlurView} from 'expo-blur';
 
@@ -37,7 +35,7 @@ function TabBar() {
 
   return (
     <Tab.Navigator
-      initialRouteName="TodayScreen" //TodayScreen || TomorrowScreen
+      initialRouteName="Pokedex"
       backBehavior="initialRoute"
       screenOptions={{
         headerShown: false,
@@ -52,8 +50,6 @@ function TabBar() {
           borderTopWidth: 0,
           backgroundColor:
             Platform.OS === 'ios' ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.55)',
-          // height: Platform.OS === "ios" ? width * 0.2 : width * 0.15, //TabBar height - Slightly larger
-          // height: Platform.OS === "ios" ? height * 0.09 : height * 0.07, //TabBar height - Slightly smaller
         },
         //TabBar Background STYLE
         tabBarBackground: () =>
@@ -74,10 +70,10 @@ function TabBar() {
           ),
       }}>
       <Tab.Screen
-        name="TodayScreen"
-        component={TodayScreen}
+        name="PokedexScreen"
+        component={PokedexScreen}
         options={{
-          tabBarLabel: 'Today',
+          tabBarLabel: 'Pokedex',
           tabBarIcon: ({color, size}) => (
             // <Icon
             //   name="hourglass-end"
@@ -89,16 +85,17 @@ function TabBar() {
           ),
         }}
       />
-      {/* <Tab.Screen
-        name="TomorrowScreen"
-        component={TomorrowScreen}
+      <Tab.Screen
+        name="SightingsScreen"
+        component={SightingsScreen}
         options={{
-          tabBarLabel: 'Tomorrow',
+          tabBarLabel: 'Sightings',
           tabBarIcon: ({color, size}) => (
-            <Icon name="triangle" type="ionicon" color={color} size={size} />
+            // <Icon name="triangle" type="ionicon" color={color} size={size} />
+            <View />
           ),
         }}
-      /> */}
+      />
     </Tab.Navigator>
   );
 }

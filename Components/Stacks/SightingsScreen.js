@@ -16,23 +16,7 @@ import {
 
 const {height, width} = Dimensions.get('window');
 
-export default function TodayScreen(props) {
-  // const uid = UIStore.useState(s => s.id);
-
-  // Async Function Template
-  //   const someFunctionName = async someVar => {
-  //     //!Do some or other logic
-  //   };
-
-  // Function Template
-  //   const someFunctionName = () => {
-  //     //!Do some or other logic
-  //   };
-
-  // const isDarkMode = useColorScheme() === 'dark';
-
-  // const [show, setShow] = useState(false);
-
+export default function SightingsScreen(props) {
   return (
     <SafeAreaView style={styles.container}>
       {/* <View style={{backgroundColor: 'green'}}></View> */}

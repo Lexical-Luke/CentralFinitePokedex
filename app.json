@@ -1,4 +1,24 @@
 {
   "name": "CentralFinitePokedex",
-  "displayName": "CentralFinitePokedex"
+  "displayName": "CentralFinitePokedex",
+  "extra": {
+    "eas": {
+      "projectId": "582f887c-6d88-4f15-b2e8-9b90363124db"
+    }
+  },
+  "expo": {
+    "plugins": [
+      [
+        "expo-notifications"
+      ]
+    ],
+    "name": "ViveTeens",
+    "slug": "CentralFinitePokedex",
+    "ios.bundleIdentifier": "org.reactjs.native.example.CentralFinitePokedex",
+    "extra": {
+      "eas": {
+        "projectId": "9792b0b7-de47-45a7-b685-a0e22c616634"
+      }
+    }
+  }
 }

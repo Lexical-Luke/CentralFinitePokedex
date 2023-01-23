@@ -3,7 +3,7 @@ import {useColorScheme, LogBox} from 'react-native';
 
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
-import NavStack from './Components/NavStack';
+import NavStack from '../Components/NavStack';
 
 //Fuck this error
 // LogBox.ignoreLogs([

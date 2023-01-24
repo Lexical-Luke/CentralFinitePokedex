@@ -13,13 +13,50 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
+import {UIStore} from '../../UIStore';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
 
 const {height, width} = Dimensions.get('window');
 
+import sendPushNotification from '../Notifications/sendPushNotification';
+
 export default function SightingsScreen(props) {
+  const [expoPushToken, setExpoPushToken] = useState(() => {
+    return UIStore.currentState.expoPushToken;
+  });
+  const [notification, setNotification] = useState(() => {
+    return UIStore.currentState.notification;
+  });
+
+  console.log(
+    'UIStore.currentState.notification',
+    UIStore.currentState.notification,
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       {/* <View style={{backgroundColor: 'green'}}></View> */}
+      <View
+        style={{flex: 1, alignItems: 'center', justifyContent: 'space-around'}}>
+        <Text>Your expo push token: {expoPushToken}</Text>
+        <View style={{alignItems: 'center', justifyContent: 'center'}}>
+          <Text>
+            Title: {notification && notification.request.content.title}
+          </Text>
+          <Text>Body: {notification && notification.request.content.body}</Text>
+          <Text>
+            Data:
+            {notification && JSON.stringify(notification.request.content.data)}
+          </Text>
+        </View>
+        <Button
+          title="Press to Send Notification"
+          onPress={async () => {
+            await sendPushNotification('Titlee', 'bodyy', 'dataa');
+          }}
+        />
+      </View>
     </SafeAreaView>
   );
 }

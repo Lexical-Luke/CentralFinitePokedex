@@ -13,49 +13,35 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
-import {UIStore} from '../../UIStore';
-import * as Device from 'expo-device';
-import * as Notifications from 'expo-notifications';
+
+import {useLazyLoadQuery, useQueryLoader} from 'react-relay';
+// import graphql from 'babel-plugin-relay';
+import graphql from 'babel-plugin-relay/macro';
 
 const {height, width} = Dimensions.get('window');
 
-import sendPushNotification from '../Notifications/sendPushNotification';
-
-export default function PokedexScreen(props) {
-  const [expoPushToken, setExpoPushToken] = useState(() => {
-    return UIStore.currentState.expoPushToken;
-  });
-  const [notification, setNotification] = useState(() => {
-    return UIStore.currentState.notification;
-  });
-
-  console.log(
-    'UIStore.currentState.notification',
-    UIStore.currentState.notification,
-  );
+export default function SightingsScreen(props) {
+  const PokedexQuery = graphql`
+    query PokedexQuery {
+      characters {
+        results {
+          id
+          image
+          name
+          species
+        }
+      }
+    }
+  `;
+  // const data = useLazyLoadQuery(PokedexQuery, {});
+  // const Pokedex = data.topStory;
+  // const [pokedexQuery, load] = useQueryLoader(PokedexQuery);
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <View style={{backgroundColor: 'green'}}></View> */}
       <View
         style={{flex: 1, alignItems: 'center', justifyContent: 'space-around'}}>
-        <Text>Your expo push token: {expoPushToken}</Text>
-        <View style={{alignItems: 'center', justifyContent: 'center'}}>
-          <Text>
-            Title: {notification && notification.request.content.title}{' '}
-          </Text>
-          <Text>Body: {notification && notification.request.content.body}</Text>
-          <Text>
-            Data:{' '}
-            {notification && JSON.stringify(notification.request.content.data)}
-          </Text>
-        </View>
-        <Button
-          title="Press to Send Notification"
-          onPress={async () => {
-            await sendPushNotification('Titlee', 'bodyy', 'dataa');
-          }}
-        />
+        {/* <Text>Pokedex: {Pokedex}</Text> */}
       </View>
     </SafeAreaView>
   );

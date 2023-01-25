@@ -16,23 +16,23 @@ import {
 
 import {useLazyLoadQuery, useQueryLoader} from 'react-relay';
 // import graphql from 'babel-plugin-relay';
-import graphql from 'babel-plugin-relay/macro';
+// import graphql from 'babel-plugin-relay/macro';
 
 const {height, width} = Dimensions.get('window');
 
 export default function SightingsScreen(props) {
-  const PokedexQuery = graphql`
-    query PokedexQuery {
-      characters {
-        results {
-          id
-          image
-          name
-          species
-        }
-      }
-    }
-  `;
+  // const PokedexQuery = graphql`
+  //   query PokedexQuery {
+  //     characters {
+  //       results {
+  //         id
+  //         image
+  //         name
+  //         species
+  //       }
+  //     }
+  //   }
+  // `;
   // const data = useLazyLoadQuery(PokedexQuery, {});
   // const Pokedex = data.topStory;
   // const [pokedexQuery, load] = useQueryLoader(PokedexQuery);

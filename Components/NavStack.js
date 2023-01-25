@@ -22,14 +22,6 @@ const {height, width} = Dimensions.get('window');
 
 const Tab = createBottomTabNavigator();
 
-// function StackScreen() {
-//   return (
-//     <HomeStack.Navigator screenOptions={{headerShown: false}}>
-//       <HomeStack.Screen name="Page" component={PageScreen} />
-//     </HomeStack.Navigator>
-//   );
-// }
-
 function TabBar() {
   const isDarkMode = useColorScheme() === 'dark';
 

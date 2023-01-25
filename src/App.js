@@ -16,18 +16,21 @@ import {UIStore} from '../UIStore';
 // import * as Notifications from 'expo-notifications';
 import {Notifications} from 'react-native-notifications';
 
+import {ApolloClient, InMemoryCache, ApolloProvider} from '@apollo/client';
+import AsyncStorage from '@react-native-community/async-storage';
+import {persistCache} from 'apollo3-cache-persist';
+
 export default function App() {
-  // const React = require('React');
-  // const {RelayEnvironmentProvider} = require('react-relay');
-  // const Environment = createNewEnvironment();
+  const cache = new InMemoryCache();
+
+  const client = new ApolloClient({
+    uri: 'https://rickandmortyapi.com/graphql',
+    cache,
+    defaultOptions: {watchQuery: {fetchPolicy: 'cache-and-network'}},
+  });
 
   const isDarkMode = useColorScheme() === 'dark';
   const Stack = createStackNavigator();
-
-  const [expoPushToken, setExpoPushToken] = useState('');
-  const [notification, setNotification] = useState(false);
-  const notificationListener = useRef();
-  const responseListener = useRef();
 
   // Request permissions on iOS, refresh token on Android
   Notifications.registerRemoteNotifications();
@@ -106,6 +109,11 @@ export default function App() {
       );
     })
     .catch(err => console.error('getInitialNotifiation() failed', err));
+
+  // const [expoPushToken, setExpoPushToken] = useState('');
+  // const [notification, setNotification] = useState(false);
+  // const notificationListener = useRef();
+  // const responseListener = useRef();
 
   // Notifications.setNotificationHandler({
   //   handleNotification: async () => ({
@@ -192,23 +200,16 @@ export default function App() {
   //   };
   // }, []);
 
-  function MainStack() {
-    return (
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}>
-        <Stack.Screen name="NavStack" component={NavStack} />
-      </Stack.Navigator>
-    );
-  }
-
   return (
-    // <PushNotificationManager>
-    <NavigationContainer>
-      {/* {loggedIn !== true ? AuthStack() : HomeStack()} */}
-      {MainStack()}
-    </NavigationContainer>
-    // </PushNotificationManager>
+    <ApolloProvider client={client}>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+          }}>
+          <Stack.Screen name="NavStack" component={NavStack} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ApolloProvider>
   );
 }

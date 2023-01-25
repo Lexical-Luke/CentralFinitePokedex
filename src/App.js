@@ -16,18 +16,25 @@ import {UIStore} from '../UIStore';
 // import * as Notifications from 'expo-notifications';
 import {Notifications} from 'react-native-notifications';
 
+import {ApolloClient, InMemoryCache, ApolloProvider} from '@apollo/client';
+import AsyncStorage from '@react-native-community/async-storage';
+import {persistCache} from 'apollo3-cache-persist';
+
+LogBox.ignoreLogs([
+  '[expo-notifications] EXNotificationCenterDelegate encountered already present delegate of UNUserNotificationCenter: <RNNotificationCenterMulticast: 0x282864780>. EXNotificationCenterDelegate will not overwrite the value not to break other features of your app. In return, expo-notifications may not work properly. To fix this problem either remove setting of the second delegate or set the delegate to an instance of EXNotificationCenterDelegate manually afterwards.',
+]);
+
 export default function App() {
-  // const React = require('React');
-  // const {RelayEnvironmentProvider} = require('react-relay');
-  // const Environment = createNewEnvironment();
+  const cache = new InMemoryCache();
+
+  const client = new ApolloClient({
+    uri: 'https://rickandmortyapi.com/graphql',
+    cache,
+    defaultOptions: {watchQuery: {fetchPolicy: 'cache-and-network'}},
+  });
 
   const isDarkMode = useColorScheme() === 'dark';
   const Stack = createStackNavigator();
-
-  const [expoPushToken, setExpoPushToken] = useState('');
-  const [notification, setNotification] = useState(false);
-  const notificationListener = useRef();
-  const responseListener = useRef();
 
   // Request permissions on iOS, refresh token on Android
   Notifications.registerRemoteNotifications();
@@ -48,16 +55,15 @@ export default function App() {
     console.log('Badges enabled: ' + !!currentPermissions.badge);
     console.log('Sounds enabled: ' + !!currentPermissions.sound);
     console.log('Alerts enabled: ' + !!currentPermissions.alert);
-    console.log('Car Play enabled: ' + !!currentPermissions.carPlay);
-    console.log(
-      'Critical Alerts enabled: ' + !!currentPermissions.criticalAlert,
-    );
-    console.log('Provisional enabled: ' + !!currentPermissions.provisional);
-    console.log(
-      'Provides App Notification Settings enabled: ' +
-        !!currentPermissions.providesAppNotificationSettings,
-    );
-    console.log('Announcement enabled: ' + !!currentPermissions.announcement);
+    // console.log('Car Play enabled: ' + !!currentPermissions.carPlay);
+    // console.log(
+    //   'Critical Alerts enabled: ' + !!currentPermissions.criticalAlert,
+    // );
+    // console.log('Provisional enabled: ' + !!currentPermissions.provisional);
+    // console.log(
+    //   'Provides App Notification Settings enabled: ' + !!currentPermissions.providesAppNotificationSettings,
+    // );
+    // console.log('Announcement enabled: ' + !!currentPermissions.announcement);
   });
 
   Notifications.events().registerNotificationReceivedForeground(
@@ -106,6 +112,11 @@ export default function App() {
       );
     })
     .catch(err => console.error('getInitialNotifiation() failed', err));
+
+  // const [expoPushToken, setExpoPushToken] = useState('');
+  // const [notification, setNotification] = useState(false);
+  // const notificationListener = useRef();
+  // const responseListener = useRef();
 
   // Notifications.setNotificationHandler({
   //   handleNotification: async () => ({
@@ -192,23 +203,16 @@ export default function App() {
   //   };
   // }, []);
 
-  function MainStack() {
-    return (
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}>
-        <Stack.Screen name="NavStack" component={NavStack} />
-      </Stack.Navigator>
-    );
-  }
-
   return (
-    // <PushNotificationManager>
-    <NavigationContainer>
-      {/* {loggedIn !== true ? AuthStack() : HomeStack()} */}
-      {MainStack()}
-    </NavigationContainer>
-    // </PushNotificationManager>
+    <ApolloProvider client={client}>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+          }}>
+          <Stack.Screen name="NavStack" component={NavStack} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ApolloProvider>
   );
 }

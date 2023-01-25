@@ -12,38 +12,122 @@ import {
   input,
   TextInput,
   Alert,
+  FlatList,
+  TouchableOpacity,
 } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
-import {useLazyLoadQuery, useQueryLoader} from 'react-relay';
+// import {useLazyLoadQuery, useQueryLoader} from 'react-relay';
 // import graphql from 'babel-plugin-relay';
 // import graphql from 'babel-plugin-relay/macro';
+import {gql, useQuery} from '@apollo/client';
+import {FlashList} from '@shopify/flash-list';
+
+const PokedexQuery = gql`
+  query PokedexQuery {
+    characters {
+      results {
+        id
+        image
+        name
+        species
+      }
+    }
+  }
+`;
 
 const {height, width} = Dimensions.get('window');
 
-export default function SightingsScreen(props) {
-  // const PokedexQuery = graphql`
-  //   query PokedexQuery {
-  //     characters {
-  //       results {
-  //         id
-  //         image
-  //         name
-  //         species
-  //       }
-  //     }
-  //   }
-  // `;
+export default function Pokedexscreen(props) {
+  const {data, loading} = useQuery(PokedexQuery);
+  console.log('useQuery', JSON.stringify(data));
   // const data = useLazyLoadQuery(PokedexQuery, {});
   // const Pokedex = data.topStory;
   // const [pokedexQuery, load] = useQueryLoader(PokedexQuery);
 
-  return (
-    <SafeAreaView style={styles.container}>
+  const PokedexEntry = ({id, image, name, species}) => (
+    <View
+      style={{
+        height: height * 0.1,
+        width: width,
+        flexDirection: 'row',
+
+        // Debugging
+        borderWidth: 1,
+        borderColor: 'grey',
+      }}>
       <View
-        style={{flex: 1, alignItems: 'center', justifyContent: 'space-around'}}>
-        {/* <Text>Pokedex: {Pokedex}</Text> */}
+        style={{
+          padding: width * 0.01,
+        }}>
+        <FastImage
+          style={{
+            width: height * 0.08,
+            height: height * 0.08,
+            resizeMode: 'cover',
+            borderRadius: 100,
+          }}
+          source={{uri: image, priority: FastImage.priority.high}}
+        />
       </View>
-    </SafeAreaView>
+      <View>
+        <Text>{name}</Text>
+        <Text>{species}</Text>
+      </View>
+    </View>
+  );
+
+  const renderPokedexEntry = ({item}) => (
+    <PokedexEntry
+      id={item.id}
+      image={item.image}
+      name={item.name}
+      species={item.species}
+    />
+  );
+
+  return (
+    <>
+      <SafeAreaView style={styles.container}>
+        <View
+          style={{
+            flex: 1,
+            height: height,
+            width: width,
+            alignItems: 'center',
+            justifyContent: 'space-around',
+          }}>
+          {loading ? (
+            <Text>Loading...</Text>
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                height: height,
+                width: width,
+                alignItems: 'center',
+                justifyContent: 'space-around',
+              }}>
+              <FlatList
+                data={data.characters.results}
+                estimatedItemSize={30}
+                keyExtractor={index => index.toString()}
+                renderItem={renderPokedexEntry}
+              />
+            </View>
+          )}
+        </View>
+      </SafeAreaView>
+      <View
+        style={{
+          paddingBottom: height * 0.08,
+
+          // Debugging
+          // borderWidth: 2,
+          // borderColor: "red",
+        }}
+      />
+    </>
   );
 }
 

@@ -14,34 +14,25 @@ import {
   Alert,
 } from 'react-native';
 
-// import {useLazyLoadQuery, useQueryLoader} from 'react-relay';
+import {useLazyLoadQuery, useQueryLoader} from 'react-relay';
 // import graphql from 'babel-plugin-relay';
 // import graphql from 'babel-plugin-relay/macro';
 
-import {gql, useQuery} from '@apollo/client';
-import {AppLoading} from 'expo';
-
 const {height, width} = Dimensions.get('window');
 
-const PokedexQuery = gql`
-  query Results {
-    characters {
-      results {
-        id
-        image
-        name
-        species
-      }
-    }
-  }
-`;
-
 export default function SightingsScreen(props) {
-  const {data, loading} = useQuery(PokedexQuery);
-
-  console.log('useQuery', JSON.stringify(data));
-  console.log('useQuery', loading);
-
+  // const PokedexQuery = graphql`
+  //   query PokedexQuery {
+  //     characters {
+  //       results {
+  //         id
+  //         image
+  //         name
+  //         species
+  //       }
+  //     }
+  //   }
+  // `;
   // const data = useLazyLoadQuery(PokedexQuery, {});
   // const Pokedex = data.topStory;
   // const [pokedexQuery, load] = useQueryLoader(PokedexQuery);
@@ -50,11 +41,7 @@ export default function SightingsScreen(props) {
     <SafeAreaView style={styles.container}>
       <View
         style={{flex: 1, alignItems: 'center', justifyContent: 'space-around'}}>
-        {loading ? (
-          <Text>loading</Text>
-        ) : (
-          <Text>Pokedex: {JSON.stringify(data)}</Text>
-        )}
+        {/* <Text>Pokedex: {Pokedex}</Text> */}
       </View>
     </SafeAreaView>
   );

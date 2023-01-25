@@ -16,20 +16,11 @@ import {UIStore} from '../UIStore';
 // import * as Notifications from 'expo-notifications';
 import {Notifications} from 'react-native-notifications';
 
-import {ApolloClient, InMemoryCache, ApolloProvider} from '@apollo/client';
-import AsyncStorage from '@react-native-community/async-storage';
-import {persistCache} from 'apollo3-cache-persist';
-import {AppLoading} from 'expo';
-
-const cache = new InMemoryCache();
-
-const client = new ApolloClient({
-  uri: 'https://rickandmortyapi.com/graphql',
-  cache,
-  defaultOptions: {watchQuery: {fetchPolicy: 'cache-and-network'}},
-});
-
 export default function App() {
+  // const React = require('React');
+  // const {RelayEnvironmentProvider} = require('react-relay');
+  // const Environment = createNewEnvironment();
+
   const isDarkMode = useColorScheme() === 'dark';
   const Stack = createStackNavigator();
 
@@ -37,15 +28,6 @@ export default function App() {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
-
-  const [loadingCache, setLoadingCache] = useState(true);
-
-  useEffect(() => {
-    persistCache({
-      cache,
-      storage: AsyncStorage,
-    }).then(() => setLoadingCache(false));
-  }, []);
 
   // Request permissions on iOS, refresh token on Android
   Notifications.registerRemoteNotifications();
@@ -222,8 +204,11 @@ export default function App() {
   }
 
   return (
-    <ApolloProvider client={client}>
-      <NavigationContainer>{MainStack()}</NavigationContainer>
-    </ApolloProvider>
+    // <PushNotificationManager>
+    <NavigationContainer>
+      {/* {loggedIn !== true ? AuthStack() : HomeStack()} */}
+      {MainStack()}
+    </NavigationContainer>
+    // </PushNotificationManager>
   );
 }

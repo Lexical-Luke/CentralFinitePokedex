@@ -20,6 +20,10 @@ import {ApolloClient, InMemoryCache, ApolloProvider} from '@apollo/client';
 import AsyncStorage from '@react-native-community/async-storage';
 import {persistCache} from 'apollo3-cache-persist';
 
+LogBox.ignoreLogs([
+  '[expo-notifications] EXNotificationCenterDelegate encountered already present delegate of UNUserNotificationCenter: <RNNotificationCenterMulticast: 0x282864780>. EXNotificationCenterDelegate will not overwrite the value not to break other features of your app. In return, expo-notifications may not work properly. To fix this problem either remove setting of the second delegate or set the delegate to an instance of EXNotificationCenterDelegate manually afterwards.',
+]);
+
 export default function App() {
   const cache = new InMemoryCache();
 
@@ -51,16 +55,15 @@ export default function App() {
     console.log('Badges enabled: ' + !!currentPermissions.badge);
     console.log('Sounds enabled: ' + !!currentPermissions.sound);
     console.log('Alerts enabled: ' + !!currentPermissions.alert);
-    console.log('Car Play enabled: ' + !!currentPermissions.carPlay);
-    console.log(
-      'Critical Alerts enabled: ' + !!currentPermissions.criticalAlert,
-    );
-    console.log('Provisional enabled: ' + !!currentPermissions.provisional);
-    console.log(
-      'Provides App Notification Settings enabled: ' +
-        !!currentPermissions.providesAppNotificationSettings,
-    );
-    console.log('Announcement enabled: ' + !!currentPermissions.announcement);
+    // console.log('Car Play enabled: ' + !!currentPermissions.carPlay);
+    // console.log(
+    //   'Critical Alerts enabled: ' + !!currentPermissions.criticalAlert,
+    // );
+    // console.log('Provisional enabled: ' + !!currentPermissions.provisional);
+    // console.log(
+    //   'Provides App Notification Settings enabled: ' + !!currentPermissions.providesAppNotificationSettings,
+    // );
+    // console.log('Announcement enabled: ' + !!currentPermissions.announcement);
   });
 
   Notifications.events().registerNotificationReceivedForeground(

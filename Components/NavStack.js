@@ -49,7 +49,7 @@ function TabBar() {
             //iOS - Full Blur
             <BlurView
               tint={isDarkMode ? 'dark' : 'light'}
-              intensity={80}
+              intensity={60}
               style={StyleSheet.absoluteFill}
             />
           ) : (

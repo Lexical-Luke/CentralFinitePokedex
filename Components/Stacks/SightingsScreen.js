@@ -37,8 +37,8 @@ export default function SightingsScreen(props) {
   // );
   async function send() {
     Notifications.postLocalNotification({
-      body: 'Local notification!',
-      title: 'Local Notification Title',
+      title: 'Central Finite Pokedex',
+      body: 'Upload Complete 🚀',
       sound: 'chime.aiff',
       silent: false,
       category: 'SOME_CATEGORY',
@@ -53,7 +53,11 @@ export default function SightingsScreen(props) {
       {/* <View style={{backgroundColor: 'green'}}></View> */}
       <View
         style={{flex: 1, alignItems: 'center', justifyContent: 'space-around'}}>
-        <Button title="Press to Send Notification" onPress={send} />
+        <Button
+          title="Press to Send Notification"
+          onPress={send}
+          color="white"
+        />
       </View>
     </SafeAreaView>
   );
@@ -64,6 +68,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'rgba(235, 64, 52, 0.9)',
   },
   input: {
     height: 40,

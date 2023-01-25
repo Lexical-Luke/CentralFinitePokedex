@@ -23,6 +23,19 @@ import FastImage from 'react-native-fast-image';
 import {gql, useQuery} from '@apollo/client';
 import {FlashList} from '@shopify/flash-list';
 
+import {
+  BallIndicator,
+  BarIndicator,
+  DotIndicator,
+  MaterialIndicator,
+  PacmanIndicator,
+  PulseIndicator,
+  SkypeIndicator,
+  UIActivityIndicator,
+  WaveIndicator,
+} from 'react-native-indicators';
+const LoadingIcon = MaterialIndicator;
+
 const PokedexQuery = gql`
   query PokedexQuery {
     characters {
@@ -49,85 +62,95 @@ export default function Pokedexscreen(props) {
     <View
       style={{
         height: height * 0.1,
-        width: width,
-        flexDirection: 'row',
+        width: width * 0.9,
 
         // Debugging
-        borderWidth: 1,
-        borderColor: 'grey',
+        // borderWidth: 1,
+        // borderColor: 'grey',
       }}>
       <View
         style={{
-          padding: width * 0.01,
+          flexDirection: 'row',
+          backgroundColor: 'rgba(240, 239, 245, 0.9)',
+          borderRadius: 25,
         }}>
-        <FastImage
+        <View
           style={{
-            width: height * 0.08,
-            height: height * 0.08,
-            resizeMode: 'cover',
-            borderRadius: 100,
-          }}
-          source={{uri: image, priority: FastImage.priority.high}}
-        />
-      </View>
-      <View>
-        <Text>{name}</Text>
-        <Text>{species}</Text>
+            padding: width * 0.015,
+          }}>
+          <FastImage
+            style={{
+              width: height * 0.08,
+              height: height * 0.08,
+              resizeMode: 'cover',
+              borderRadius: 100,
+            }}
+            source={{uri: image, priority: FastImage.priority.high}}
+          />
+        </View>
+        <View
+          style={{
+            padding: width * 0.02,
+          }}>
+          <Text
+            style={{
+              fontSize: width * 0.045,
+            }}>
+            {name}
+          </Text>
+          <Text
+            style={{
+              fontSize: width * 0.035,
+              fontStyle: 'italic',
+            }}>
+            {species}
+          </Text>
+        </View>
       </View>
     </View>
   );
 
   const renderPokedexEntry = ({item}) => (
-    <PokedexEntry
-      id={item.id}
-      image={item.image}
-      name={item.name}
-      species={item.species}
-    />
+    <View
+      style={{
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: width * 0.01,
+      }}>
+      <PokedexEntry
+        id={item.id}
+        image={item.image}
+        name={item.name}
+        species={item.species}
+      />
+    </View>
   );
 
   return (
-    <>
-      <SafeAreaView style={styles.container}>
-        <View
-          style={{
-            flex: 1,
-            height: height,
-            width: width,
-            alignItems: 'center',
-            justifyContent: 'space-around',
-          }}>
-          {loading ? (
-            <Text>Loading...</Text>
-          ) : (
-            <View
-              style={{
-                flex: 1,
-                height: height,
-                width: width,
-                alignItems: 'center',
-                justifyContent: 'space-around',
-              }}>
-              <FlatList
-                data={data.characters.results}
-                estimatedItemSize={30}
-                keyExtractor={index => index.toString()}
-                renderItem={renderPokedexEntry}
-              />
-            </View>
-          )}
-        </View>
-      </SafeAreaView>
+    <SafeAreaView style={styles.container}>
       <View
         style={{
-          paddingBottom: height * 0.08,
-
-          // Debugging
-          // borderWidth: 2,
-          // borderColor: "red",
-        }}
-      />
-    </>
+          flex: 1,
+          width: width,
+        }}>
+        {loading ? (
+          <LoadingIcon color="white" />
+        ) : (
+          <FlashList
+            data={data?.characters.results}
+            estimatedItemSize={30}
+            renderItem={renderPokedexEntry}
+            ListFooterComponent={() => (
+              <View
+                style={{
+                  paddingBottom: height * 0.08,
+                }}
+              />
+            )}
+          />
+        )}
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -136,6 +159,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'rgba(235, 64, 52, 0.9)',
   },
   input: {
     height: 40,

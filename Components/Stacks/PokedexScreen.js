@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react/no-unstable-nested-components */
 import React, {useState, useEffect} from 'react';
 import {
   SafeAreaView,
@@ -53,10 +55,16 @@ const {height, width} = Dimensions.get('window');
 
 export default function Pokedexscreen(props) {
   const {data, loading} = useQuery(PokedexQuery);
-  console.log('useQuery', JSON.stringify(data));
+  // console.log('useQuery', JSON.stringify(data));
+
   // const data = useLazyLoadQuery(PokedexQuery, {});
   // const Pokedex = data.topStory;
   // const [pokedexQuery, load] = useQueryLoader(PokedexQuery);
+
+  const Species = {
+    Human: 'Human',
+    Alien: 'Alien',
+  };
 
   const PokedexEntry = ({id, image, name, species}) => (
     <View
@@ -95,6 +103,13 @@ export default function Pokedexscreen(props) {
           <Text
             style={{
               fontSize: width * 0.045,
+              fontWeight: '600',
+            }}>
+            {id.toString().padStart(3, '0')}
+          </Text>
+          <Text
+            style={{
+              fontSize: width * 0.045,
             }}>
             {name}
           </Text>
@@ -102,6 +117,9 @@ export default function Pokedexscreen(props) {
             style={{
               fontSize: width * 0.035,
               fontStyle: 'italic',
+              color:
+                (species === Species.Human && 'red') ||
+                (species === Species.Alien && 'green'),
             }}>
             {species}
           </Text>

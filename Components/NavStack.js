@@ -2,7 +2,8 @@ import React, {useRef} from 'react';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Icon} from '@rneui/themed';
+import {Icon} from 'react-native-elements';
+
 import {
   StyleSheet,
   Dimensions,
@@ -33,7 +34,7 @@ function TabBar() {
         headerShown: false,
         tabBarHideOnKeyboard: true,
         // tabBarShowLabel: true,
-        tabBarActiveTintColor: '#0FB7D5',
+        tabBarActiveTintColor: 'rgba(237, 117, 52, 0.9)',
         tabBarInactiveTintColor: isDarkMode ? Colors.lighter : Colors.darker,
 
         //TabBar Container STYLE
@@ -67,13 +68,7 @@ function TabBar() {
         options={{
           tabBarLabel: 'Pokedex',
           tabBarIcon: ({color, size}) => (
-            // <Icon
-            //   name="hourglass-end"
-            //   type="font-awesome-5"
-            //   color={color}
-            //   size={size}
-            // />
-            <View />
+            <Icon name="book" type="feather" color={color} size={size} />
           ),
         }}
       />
@@ -83,8 +78,12 @@ function TabBar() {
         options={{
           tabBarLabel: 'Sightings',
           tabBarIcon: ({color, size}) => (
-            // <Icon name="triangle" type="ionicon" color={color} size={size} />
-            <View />
+            <Icon
+              name="binoculars"
+              type="font-awesome"
+              color={color}
+              size={size}
+            />
           ),
         }}
       />

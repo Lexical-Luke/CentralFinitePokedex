@@ -19,12 +19,32 @@ import {Notifications} from 'react-native-notifications';
 import {ApolloClient, InMemoryCache, ApolloProvider} from '@apollo/client';
 import AsyncStorage from '@react-native-community/async-storage';
 import {persistCache} from 'apollo3-cache-persist';
+import {Camera, CameraPermissionStatus} from 'react-native-vision-camera';
 
 LogBox.ignoreLogs([
   '[expo-notifications] EXNotificationCenterDelegate encountered already present delegate of UNUserNotificationCenter: <RNNotificationCenterMulticast: 0x282864780>. EXNotificationCenterDelegate will not overwrite the value not to break other features of your app. In return, expo-notifications may not work properly. To fix this problem either remove setting of the second delegate or set the delegate to an instance of EXNotificationCenterDelegate manually afterwards.',
 ]);
 
 export default function App() {
+  // const [cameraPermission, setCameraPermission] = useState();
+  // const [microphonePermission, setMicrophonePermission] = useState();
+
+  //   useEffect(() => {
+  //     Camera.getCameraPermissionStatus().then(setCameraPermission);
+  //     Camera.getMicrophonePermissionStatus().then(setMicrophonePermission);
+  //     const cameraPermission = await Camera.getCameraPermissionStatus()
+  // const microphonePermission = await Camera.getMicrophonePermissionStatus()
+  //   }, []);
+
+  //   console.log(
+  //     `Re-rendering Navigator. Camera: ${cameraPermission} | Microphone: ${microphonePermission}`,
+  //   );
+  async function getPermissions() {
+    const newCameraPermission = await Camera.requestCameraPermission();
+    const newMicrophonePermission = await Camera.requestMicrophonePermission();
+  }
+  getPermissions();
+
   const cache = new InMemoryCache();
 
   const client = new ApolloClient({

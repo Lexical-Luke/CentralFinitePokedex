@@ -1,3 +1,4 @@
+/* eslint-disable react/self-closing-comp */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect, useRef} from 'react';
 import {
@@ -17,31 +18,21 @@ import {
 } from 'react-native';
 import {UIStore} from '../../UIStore';
 import * as Device from 'expo-device';
+import {Icon} from 'react-native-elements';
 
 // import * as Notifications from 'expo-notifications';
 import {Notifications} from 'react-native-notifications';
-
-import {
-  BallIndicator,
-  BarIndicator,
-  DotIndicator,
-  MaterialIndicator,
-  PacmanIndicator,
-  PulseIndicator,
-  SkypeIndicator,
-  UIActivityIndicator,
-  WaveIndicator,
-} from 'react-native-indicators';
-const LoadingIcon = MaterialIndicator;
-
-import {Icon} from 'react-native-elements';
-
-const {height, width} = Dimensions.get('window');
 
 import sendPushNotification from '../Notifications/sendPushNotification';
 
 import {Camera, useCameraDevices} from 'react-native-vision-camera';
 import {useIsFocused} from '@react-navigation/native';
+import Video from 'react-native-video';
+
+import {MaterialIndicator} from 'react-native-indicators';
+const LoadingIcon = MaterialIndicator;
+
+const {height, width} = Dimensions.get('window');
 
 export default function SightingsScreen(props) {
   const [ToggleRecord, setToggleRecord] = useState(false);
@@ -73,28 +64,41 @@ export default function SightingsScreen(props) {
   const devices = useCameraDevices();
   const device = devices.back;
   const isFocused = useIsFocused();
+  const [LatestVideoPath, setLatestVideoPath] = useState('');
 
   function startRecordingVideo() {
-    camera.current.startRecording({
-      flash: 'on',
-      onRecordingFinished: video => console.log(video),
-      onRecordingError: error => console.error(error),
-    });
-    console.log('Start Video recording');
+    try {
+      console.log('Start Video recording');
+
+      camera.current.startRecording({
+        flash: 'on',
+        onRecordingFinished: video => {
+          setLatestVideoPath(video.path);
+          console.log(video);
+        },
+        onRecordingError: error => console.error(error),
+      });
+    } catch (error) {
+      console.log('Start Video recording error', error);
+    }
   }
 
   async function stopRecordingVideo() {
-    await camera.current.stopRecording();
-    console.log('Stop Video Recording');
+    try {
+      console.log('Stop Video Recording');
+      await camera.current.stopRecording();
+    } catch (error) {
+      console.log('Stop Video Recording error', error);
+    }
   }
 
-  // useEffect(() => {
-  //   if (ToggleRecord) {
-  //     startRecordingVideo();
-  //   } else {
-  //     stopRecordingVideo();
-  //   }
-  // }, [ToggleRecord]);
+  useEffect(() => {
+    if (ToggleRecord) {
+      startRecordingVideo();
+    } else {
+      stopRecordingVideo();
+    }
+  }, [ToggleRecord]);
 
   return (
     <View style={styles.container}>
@@ -103,18 +107,21 @@ export default function SightingsScreen(props) {
           <View style={{height: height, width: width}}>
             <View
               style={{
+                zIndex: 1,
                 position: 'absolute',
-                top: 0,
-
-                right: 0,
                 justifyContent: 'center',
                 alignItems: 'center',
+                top: 0,
+                right: 0,
 
                 paddingTop: height * 0.075,
                 paddingRight: height * 0.035,
               }}>
               <TouchableOpacity
-                onPress={() => setCameraOpen(!CameraOpen)}
+                onPress={() => {
+                  setCameraOpen(!CameraOpen);
+                  console.log('LatestVideoPath', LatestVideoPath);
+                }}
                 style={{
                   justifyContent: 'center',
                   alignItems: 'center',
@@ -143,6 +150,52 @@ export default function SightingsScreen(props) {
                 </View>
               </TouchableOpacity>
             </View>
+            {LatestVideoPath !== '' && (
+              <>
+                <TouchableOpacity
+                  onPress={() => this.player.presentFullscreenPlayer()}
+                  style={{
+                    // flex: 1,
+                    // justifyContent: 'center',
+                    // alignItems: 'center',
+                    // backgroundColor: 'white',
+                    paddingTop: height * 0.175,
+                  }}>
+                  <Video
+                    source={{uri: LatestVideoPath}} // Can be a URL or a local file.
+                    ref={ref => {
+                      this.player = ref;
+                    }} // Store reference
+                    onBuffer={this.onBuffer} // Callback when remote video is buffering
+                    onError={this.videoError} // Callback when video cannot be loaded
+                    style={{
+                      height: height * 0.5,
+                    }}
+                  />
+                </TouchableOpacity>
+                <View
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: height * 0.05,
+                  }}>
+                  <TouchableOpacity
+                    onPress={send}
+                    style={{
+                      height: height * 0.1,
+                      width: width * 0.5,
+                      backgroundColor: 'rgba(73, 235, 107, 0.9)',
+                      borderRadius: 20,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Text style={{fontWeight: '600', fontSize: width * 0.05}}>
+                      Upload Sighting
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
           </View>
         ) : (
           <View style={{height: height, width: width}}>
@@ -157,8 +210,8 @@ export default function SightingsScreen(props) {
                 style={{
                   position: 'absolute',
                   top: 0,
-
                   right: 0,
+
                   justifyContent: 'center',
                   alignItems: 'center',
 

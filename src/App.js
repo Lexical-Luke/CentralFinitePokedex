@@ -62,7 +62,7 @@ export default function App() {
   Notifications.events().registerRemoteNotificationsRegistered(
     (event: Registered) => {
       // TODO: Send the token to my server so it could send back push notifications...
-      console.log('Device Token Received', event.deviceToken);
+      // console.log('Device Token Received', event.deviceToken);
     },
   );
   Notifications.events().registerRemoteNotificationsRegistrationFailed(
@@ -71,20 +71,22 @@ export default function App() {
     },
   );
 
-  Notifications.ios.checkPermissions().then(currentPermissions => {
-    console.log('Badges enabled: ' + !!currentPermissions.badge);
-    console.log('Sounds enabled: ' + !!currentPermissions.sound);
-    console.log('Alerts enabled: ' + !!currentPermissions.alert);
-    // console.log('Car Play enabled: ' + !!currentPermissions.carPlay);
-    // console.log(
-    //   'Critical Alerts enabled: ' + !!currentPermissions.criticalAlert,
-    // );
-    // console.log('Provisional enabled: ' + !!currentPermissions.provisional);
-    // console.log(
-    //   'Provides App Notification Settings enabled: ' + !!currentPermissions.providesAppNotificationSettings,
-    // );
-    // console.log('Announcement enabled: ' + !!currentPermissions.announcement);
-  });
+  if (Platform.OS === 'ios') {
+    Notifications.ios.checkPermissions().then(currentPermissions => {
+      console.log('Badges enabled: ' + !!currentPermissions.badge);
+      console.log('Sounds enabled: ' + !!currentPermissions.sound);
+      console.log('Alerts enabled: ' + !!currentPermissions.alert);
+      // console.log('Car Play enabled: ' + !!currentPermissions.carPlay);
+      // console.log(
+      //   'Critical Alerts enabled: ' + !!currentPermissions.criticalAlert,
+      // );
+      // console.log('Provisional enabled: ' + !!currentPermissions.provisional);
+      // console.log(
+      //   'Provides App Notification Settings enabled: ' + !!currentPermissions.providesAppNotificationSettings,
+      // );
+      // console.log('Announcement enabled: ' + !!currentPermissions.announcement);
+    });
+  }
 
   Notifications.events().registerNotificationReceivedForeground(
     (

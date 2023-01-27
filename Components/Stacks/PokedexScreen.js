@@ -98,18 +98,20 @@ export default function Pokedexscreen(props) {
         </View>
         <View
           style={{
-            padding: width * 0.02,
+            padding: height * 0.005,
           }}>
           <Text
             style={{
               fontSize: width * 0.045,
               fontWeight: '600',
+              color: 'black',
             }}>
             {id.toString().padStart(3, '0')}
           </Text>
           <Text
             style={{
               fontSize: width * 0.045,
+              color: 'black',
             }}>
             {name}
           </Text>

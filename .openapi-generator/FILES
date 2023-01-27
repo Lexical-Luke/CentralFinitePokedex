@@ -1,0 +1,13 @@
+.openapi-generator-ignore
+apis/DefaultApi.ts
+apis/index.ts
+index.ts
+models/Detection.ts
+models/Frame.ts
+models/FrameDetection.ts
+models/HTTPValidationError.ts
+models/LocationInner.ts
+models/ValidationError.ts
+models/Video.ts
+models/index.ts
+runtime.ts

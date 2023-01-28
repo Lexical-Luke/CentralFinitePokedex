@@ -22,14 +22,13 @@ import {Icon} from 'react-native-elements';
 
 // import * as Notifications from 'expo-notifications';
 import {Notifications} from 'react-native-notifications';
+import {DocumentDirectoryPath} from 'react-native-fs';
 
 import sendPushNotification from '../Notifications/sendPushNotification';
 
 import {Camera, useCameraDevices} from 'react-native-vision-camera';
 import {useIsFocused} from '@react-navigation/native';
 import Video from 'react-native-video';
-
-import {uploadFiles, DocumentDirectoryPath} from 'react-native-fs';
 
 import {useUploadForm} from '../Axios/useUploadForm';
 import CircularProgress from 'react-native-circular-progress-indicator';
@@ -38,6 +37,7 @@ import {MaterialIndicator} from 'react-native-indicators';
 const LoadingIcon = MaterialIndicator;
 
 const {height, width} = Dimensions.get('window');
+var RNFS = require('react-native-fs');
 
 export default function SightingsScreen(props) {
   const [ToggleRecord, setToggleRecord] = useState(false);
@@ -45,17 +45,22 @@ export default function SightingsScreen(props) {
 
   const [LatestVideoPath, setLatestVideoPath] = useState('');
   const [formValues, setFormValues] = useState({
-    video: null,
+    type: 'video/mov',
+    file: null,
   });
 
   const {isSuccess, uploadForm, progress} = useUploadForm(
-    'https://mvai.qa.onroadvantage.com/api/analyse',
+    'https://mvai.qa.onroadvantage.com/api/analyse?models=Passenger&fps=5&orientation=right',
   );
 
   const handleSubmit = async () => {
     const formData = new FormData();
-    formValues.image && formData.append('video', formValues.video);
-    return await uploadForm(formData);
+    formValues.file && formData.append('file', formValues.file);
+
+    // console.log('formData: ', formData);
+    // console.log('formValues: ', formValues);
+
+    return uploadForm(formData);
   };
 
   // const [expoPushToken, setExpoPushToken] = useState(() => {
@@ -69,19 +74,9 @@ export default function SightingsScreen(props) {
   //   'UIStore.currentState.notification',
   //   UIStore.currentState.notification,
   // );
-  async function uploadLogic() {
-    sendNotification();
-    handleSubmit();
-  }
 
-  async function sendNotification() {
-    Notifications.postLocalNotification({
-      title: 'Central Finite Pokedex',
-      body: 'Uploading Sighting...',
-      sound: 'chime.aiff',
-      silent: false,
-      category: 'SOME_CATEGORY',
-    });
+  async function uploadLogic() {
+    handleSubmit();
   }
 
   const camera = useRef();
@@ -97,10 +92,20 @@ export default function SightingsScreen(props) {
         flash: 'on',
         onRecordingFinished: video => {
           setLatestVideoPath(video.path);
-          setFormValues(prevFormValues => ({
-            ...prevFormValues,
-            video: video.path,
-          }));
+
+          // setFormValues(prevFormValues => ({
+          //   ...prevFormValues,
+          //   file: video.path,
+          // }));
+
+          RNFS.readFile(video.path, 'base64').then(data => {
+            // binary data
+            // console.log(data);
+            setFormValues(prevFormValues => ({
+              ...prevFormValues,
+              file: data,
+            }));
+          });
 
           console.log(video);
         },
@@ -127,28 +132,6 @@ export default function SightingsScreen(props) {
       stopRecordingVideo();
     }
   }, [ToggleRecord]);
-
-  var files = [
-    {
-      name: LatestVideoPath,
-      filename: LatestVideoPath,
-      filepath: DocumentDirectoryPath + '/' + LatestVideoPath,
-      filetype: 'video/mov',
-    },
-  ];
-
-  uploadFiles({
-    toUrl: 'https://mvai.qa.onroadvantage.com/api/analyse',
-    files: files,
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-    },
-    //invoked when the uploading starts.
-    begin: () => {},
-    // You can use this callback to show a progress indicator.
-    progress: ({totalBytesSent, totalBytesExpectedToSend}) => {},
-  });
 
   return (
     <View style={styles.container}>

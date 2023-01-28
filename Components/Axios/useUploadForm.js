@@ -19,6 +19,8 @@ export const useUploadForm = url => {
   }
 
   const uploadForm = async formData => {
+    sendNotification('Central Finite Pokedex', 'Uploading Sighting...');
+
     await axios
       .post(url, formData, {
         headers: {
@@ -31,7 +33,7 @@ export const useUploadForm = url => {
         onDownloadProgress: progressEvent => {
           const progress =
             50 + (progressEvent.loaded / progressEvent.total) * 50;
-          console.log(progress);
+          // console.log(progress);
           setProgress(progress);
         },
       })
@@ -45,7 +47,7 @@ export const useUploadForm = url => {
       })
       .catch(error => {
         console.log('axios error:', error);
-        sendNotification('Central Finite Pokedex', 'Upload error: ' + error);
+        sendNotification('Central Finite Pokedex', error.toString());
       });
 
     await new Promise(resolve => {

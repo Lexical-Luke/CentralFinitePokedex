@@ -29,6 +29,11 @@ import {Camera, useCameraDevices} from 'react-native-vision-camera';
 import {useIsFocused} from '@react-navigation/native';
 import Video from 'react-native-video';
 
+import {uploadFiles, DocumentDirectoryPath} from 'react-native-fs';
+
+import {useUploadForm} from '../Axios/useUploadForm';
+import CircularProgress from 'react-native-circular-progress-indicator';
+
 import {MaterialIndicator} from 'react-native-indicators';
 const LoadingIcon = MaterialIndicator;
 
@@ -37,6 +42,21 @@ const {height, width} = Dimensions.get('window');
 export default function SightingsScreen(props) {
   const [ToggleRecord, setToggleRecord] = useState(false);
   const [CameraOpen, setCameraOpen] = useState(false);
+
+  const [LatestVideoPath, setLatestVideoPath] = useState('');
+  const [formValues, setFormValues] = useState({
+    video: null,
+  });
+
+  const {isSuccess, uploadForm, progress} = useUploadForm(
+    'https://mvai.qa.onroadvantage.com/api/analyse',
+  );
+
+  const handleSubmit = async () => {
+    const formData = new FormData();
+    formValues.image && formData.append('video', formValues.video);
+    return await uploadForm(formData);
+  };
 
   // const [expoPushToken, setExpoPushToken] = useState(() => {
   //   return UIStore.currentState.expoPushToken;
@@ -49,22 +69,25 @@ export default function SightingsScreen(props) {
   //   'UIStore.currentState.notification',
   //   UIStore.currentState.notification,
   // );
-  async function send() {
+  async function uploadLogic() {
+    sendNotification();
+    handleSubmit();
+  }
+
+  async function sendNotification() {
     Notifications.postLocalNotification({
       title: 'Central Finite Pokedex',
-      body: 'Upload Complete 🚀',
+      body: 'Uploading Sighting...',
       sound: 'chime.aiff',
       silent: false,
       category: 'SOME_CATEGORY',
     });
-    console.log('message sent');
   }
 
   const camera = useRef();
   const devices = useCameraDevices();
   const device = devices.back;
   const isFocused = useIsFocused();
-  const [LatestVideoPath, setLatestVideoPath] = useState('');
 
   function startRecordingVideo() {
     try {
@@ -74,6 +97,11 @@ export default function SightingsScreen(props) {
         flash: 'on',
         onRecordingFinished: video => {
           setLatestVideoPath(video.path);
+          setFormValues(prevFormValues => ({
+            ...prevFormValues,
+            video: video.path,
+          }));
+
           console.log(video);
         },
         onRecordingError: error => console.error(error),
@@ -99,6 +127,28 @@ export default function SightingsScreen(props) {
       stopRecordingVideo();
     }
   }, [ToggleRecord]);
+
+  var files = [
+    {
+      name: LatestVideoPath,
+      filename: LatestVideoPath,
+      filepath: DocumentDirectoryPath + '/' + LatestVideoPath,
+      filetype: 'video/mov',
+    },
+  ];
+
+  uploadFiles({
+    toUrl: 'https://mvai.qa.onroadvantage.com/api/analyse',
+    files: files,
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+    },
+    //invoked when the uploading starts.
+    begin: () => {},
+    // You can use this callback to show a progress indicator.
+    progress: ({totalBytesSent, totalBytesExpectedToSend}) => {},
+  });
 
   return (
     <View style={styles.container}>
@@ -180,7 +230,7 @@ export default function SightingsScreen(props) {
                     padding: height * 0.05,
                   }}>
                   <TouchableOpacity
-                    onPress={send}
+                    onPress={uploadLogic}
                     style={{
                       height: height * 0.1,
                       width: width * 0.5,
@@ -189,9 +239,23 @@ export default function SightingsScreen(props) {
                       justifyContent: 'center',
                       alignItems: 'center',
                     }}>
-                    <Text style={{fontWeight: '600', fontSize: width * 0.05}}>
-                      Upload Sighting
-                    </Text>
+                    {progress > 0 ? (
+                      <CircularProgress
+                        value={progress}
+                        radius={35}
+                        activeStrokeWidth={12}
+                        progressValueColor={'#ecf0f1'}
+                        strokeColorConfig={[
+                          {color: 'red', value: 0},
+                          {color: 'skyblue', value: 50},
+                          {color: 'yellowgreen', value: 100},
+                        ]}
+                      />
+                    ) : (
+                      <Text style={{fontWeight: '600', fontSize: width * 0.05}}>
+                        Upload Sighting
+                      </Text>
+                    )}
                   </TouchableOpacity>
                 </View>
               </>
